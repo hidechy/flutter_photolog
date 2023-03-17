@@ -8,7 +8,7 @@ final latLngProvider =
     StateNotifierProvider.autoDispose<LatLngNotifier, LatLngResponseState>(
         (ref) {
   return LatLngNotifier(
-    const LatLngResponseState(lat: 0.0, lng: 0.0),
+    const LatLngResponseState(lat: 0, lng: 0),
   );
 });
 

@@ -9,7 +9,7 @@ import '../state/lat_lng/lat_lng_notifier.dart';
 import '../state/lat_lng/lat_lng_request_state.dart';
 
 class HomeScreen extends ConsumerWidget {
-  HomeScreen({Key? key}) : super(key: key);
+  HomeScreen({super.key});
 
   String funabashi = '35.7102009,139.9490672';
   String zenpukuji = '35.7185071,139.5869534';
@@ -28,18 +28,21 @@ class HomeScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 50),
-          IconButton(
-            onPressed: () {
-              getLocation();
-            },
-            icon: const Icon(Icons.location_on),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                onPressed: getLocation,
+                icon: const Icon(Icons.location_on),
+              ),
+              Column(
+                children: [
+                  Text(latLngState.lat.toString()),
+                  Text(latLngState.lng.toString()),
+                ],
+              ),
+            ],
           ),
-          Divider(
-            color: Colors.white.withOpacity(0.5),
-            thickness: 2,
-          ),
-          Text(latLngState.lat.toString()),
-          Text(latLngState.lng.toString()),
         ],
       ),
     );
@@ -48,7 +51,7 @@ class HomeScreen extends ConsumerWidget {
   ///
   Future<void> getLocation() async {
     // --- 追記 ---
-    LocationPermission permission = await Geolocator.checkPermission();
+    var permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
@@ -68,12 +71,12 @@ class HomeScreen extends ConsumerWidget {
     // 東経がプラス、西経がマイナス
     debugPrint('経度: ${position.longitude}');
 
-    var param = LatLngRequestState(
+    final param = LatLngRequestState(
       lat: position.latitude,
       lng: position.longitude,
     );
 
-    _ref.watch(latLngProvider.notifier).setLatLng(param: param);
+    await _ref.watch(latLngProvider.notifier).setLatLng(param: param);
 
     //
 
@@ -82,25 +85,25 @@ class HomeScreen extends ConsumerWidget {
 
     //
 
-    var exFunabashi = funabashi.split(',');
-    var exZenpukuji = zenpukuji.split(',');
+    final exFunabashi = funabashi.split(',');
+    final exZenpukuji = zenpukuji.split(',');
 
     // 距離をメートルで返す
     final distanceInMeters = Geolocator.distanceBetween(
-      exFunabashi[0].toString().toDouble(),
-      exFunabashi[1].toString().toDouble(),
-      exZenpukuji[0].toString().toDouble(),
-      exZenpukuji[1].toString().toDouble(),
+      exFunabashi[0].toDouble(),
+      exFunabashi[1].toDouble(),
+      exZenpukuji[0].toDouble(),
+      exZenpukuji[1].toDouble(),
     );
 
     debugPrint('距離:$distanceInMeters');
 
     // 方位を返す
     final bearing = Geolocator.bearingBetween(
-      exFunabashi[0].toString().toDouble(),
-      exFunabashi[1].toString().toDouble(),
-      exZenpukuji[0].toString().toDouble(),
-      exZenpukuji[1].toString().toDouble(),
+      exFunabashi[0].toDouble(),
+      exFunabashi[1].toDouble(),
+      exZenpukuji[0].toDouble(),
+      exZenpukuji[1].toDouble(),
     );
 
     debugPrint('方位:$bearing');
