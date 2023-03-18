@@ -24,6 +24,12 @@ class LatLngNotifier extends StateNotifier<LatLngResponseState> {
   Future<void> setImageUrl({required String imageUrl}) async {
     state = state.copyWith(imageUrl: imageUrl);
   }
+
+  ///
+
+  Future<void> refresh() async {
+    state = state.copyWith(lat: 0, lng: 0, imageUrl: '');
+  }
 }
 
 ////////////////////////////////////////////////

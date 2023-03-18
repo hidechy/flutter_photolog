@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable, avoid_catches_without_on_clauses, empty_catches
+// ignore_for_file: must_be_immutable, avoid_catches_without_on_clauses, empty_catches, cascade_invocations
 
 import 'dart:io';
 
@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 import '../extensions/extensions.dart';
 import '../state/lat_lng/lat_lng_notifier.dart';
 import '../state/lat_lng/lat_lng_request_state.dart';
+import '../state/photolog/photolog_notifier.dart';
 import '../utility/utility.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -70,9 +71,38 @@ class HomeScreen extends ConsumerWidget {
                 ],
               ),
               Text(latLngState.imageUrl),
-              IconButton(
-                onPressed: dataSaving,
-                icon: const Icon(Icons.input),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    onPressed: () async {
+                      await dataSaving();
+
+                      await _ref.watch(latLngProvider.notifier).refresh();
+
+                      await _ref.watch(photologProvider.notifier).getAll();
+                    },
+                    icon: const Icon(Icons.input),
+                  ),
+                  IconButton(
+                    onPressed: () async {
+                      await _ref.watch(latLngProvider.notifier).refresh();
+
+                      await _ref.watch(photologProvider.notifier).getAll();
+                    },
+                    icon: const Icon(
+                      Icons.refresh,
+                      color: Colors.yellowAccent,
+                    ),
+                  ),
+                ],
+              ),
+              Divider(
+                color: Colors.white.withOpacity(0.6),
+                thickness: 2,
+              ),
+              Expanded(
+                child: photolist(),
               ),
             ],
           ),
@@ -194,11 +224,90 @@ class HomeScreen extends ConsumerWidget {
       'lat': latLngState.lat.toString(),
       'lng': latLngState.lng.toString(),
       'image': imageUrl,
+      'index':
+          '${DateTime.now().yyyymmdd}_${timeFormat.format(DateTime.now())}',
     };
 
     final CollectionReference reference =
         FirebaseFirestore.instance.collection('photolog');
 
     await reference.add(param);
+  }
+
+  ///
+  Widget photolist() {
+    final list = <Widget>[];
+
+    final photologState = _ref.watch(photologProvider);
+
+    var keepDate = '';
+    photologState.forEach((element) {
+      if (element.date != keepDate) {
+        list.add(
+          Container(
+            width: _context.screenSize.width,
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              color: Colors.yellowAccent.withOpacity(0.2),
+            ),
+            child: Text(element.date),
+          ),
+        );
+      }
+
+      list.add(
+        Container(
+          padding: const EdgeInsets.all(10),
+          margin: const EdgeInsets.only(bottom: 10),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: Colors.white.withOpacity(0.3),
+              ),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                width: 50,
+                child: Image.network(element.image),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(element.time),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(),
+                        Row(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [Text(element.lat), Text(element.lng)],
+                            ),
+                            const SizedBox(width: 10),
+                            const Icon(Icons.location_on),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      keepDate = element.date;
+    });
+
+    return SingleChildScrollView(
+      child: Column(children: list),
+    );
   }
 }

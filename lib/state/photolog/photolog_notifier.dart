@@ -1,0 +1,35 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:photolog/state/photolog/photolog_state.dart';
+
+final photologProvider = StateNotifierProvider.autoDispose<
+    PhotologStateNotifier, List<PhotologState>>((ref) {
+  return PhotologStateNotifier([])..getAll();
+});
+
+class PhotologStateNotifier extends StateNotifier<List<PhotologState>> {
+  PhotologStateNotifier(super.state);
+
+  Future<void> getAll() async {
+    final QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('photolog')
+        .orderBy('index', descending: true)
+        .get();
+
+    final list = snapshot.docs.map((DocumentSnapshot document) {
+      final data = document.data()! as Map<String, dynamic>;
+
+      return PhotologState(
+        id: document.id,
+        date: data['date'].toString(),
+        time: data['time'].toString(),
+        lat: data['lat'].toString(),
+        lng: data['lng'].toString(),
+        image: data['image'].toString(),
+        index: data['index'].toString(),
+      );
+    }).toList();
+
+    state = list;
+  }
+}
