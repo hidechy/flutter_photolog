@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -18,11 +19,15 @@ class HomeScreen extends ConsumerWidget {
   String funabashi = '35.7102009,139.9490672';
   String zenpukuji = '35.7185071,139.5869534';
 
+  String imageUrl = '';
+
+  late BuildContext _context;
   late WidgetRef _ref;
 
   ///
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    _context = context;
     _ref = ref;
 
     final latLngState = ref.watch(latLngProvider);
@@ -44,6 +49,10 @@ class HomeScreen extends ConsumerWidget {
                   IconButton(
                     onPressed: photoget,
                     icon: const Icon(Icons.camera),
+                  ),
+                  IconButton(
+                    onPressed: dataSaving,
+                    icon: const Icon(Icons.input),
                   ),
                 ],
               ),
@@ -127,8 +136,6 @@ class HomeScreen extends ConsumerWidget {
 
     final file = await imagePicker.pickImage(source: ImageSource.camera);
 
-    print('${file?.path}');
-
     if (file == null) {
       return;
     }
@@ -142,9 +149,39 @@ class HomeScreen extends ConsumerWidget {
     try {
       await referenceImageToUpload.putFile(File(file.path));
 
-      final aaa = await referenceImageToUpload.getDownloadURL();
-
-      print(aaa);
+      imageUrl = await referenceImageToUpload.getDownloadURL();
     } catch (error) {}
+  }
+
+  ///
+  Future<void> dataSaving() async {
+    final latLngState = _ref.watch(latLngProvider);
+    if (latLngState.lat == 0.0 || latLngState.lng == 0.0) {
+      ScaffoldMessenger.of(_context).showSnackBar(
+        const SnackBar(content: Text('no lat lng')),
+      );
+
+      return;
+    }
+
+    if (imageUrl.isEmpty) {
+      ScaffoldMessenger.of(_context).showSnackBar(
+        const SnackBar(content: Text('no image')),
+      );
+
+      return;
+    }
+
+    final param = <String, String>{
+      'date': DateTime.now().yyyymmdd,
+      'lat': latLngState.lat.toString(),
+      'lng': latLngState.lng.toString(),
+      'image': imageUrl,
+    };
+
+    final CollectionReference reference =
+        FirebaseFirestore.instance.collection('photolog');
+
+    await reference.add(param);
   }
 }
