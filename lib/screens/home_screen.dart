@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 import '../extensions/extensions.dart';
 import '../state/lat_lng/lat_lng_notifier.dart';
 import '../state/lat_lng/lat_lng_request_state.dart';
+import '../utility/utility.dart';
 
 class HomeScreen extends ConsumerWidget {
   HomeScreen({super.key});
@@ -21,6 +22,8 @@ class HomeScreen extends ConsumerWidget {
   String zenpukuji = '35.7185071,139.5869534';
 
   String imageUrl = '';
+
+  final Utility _utility = Utility();
 
   late BuildContext _context;
   late WidgetRef _ref;
@@ -34,38 +37,44 @@ class HomeScreen extends ConsumerWidget {
     final latLngState = ref.watch(latLngProvider);
 
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Stack(
+        fit: StackFit.expand,
         children: [
-          const SizedBox(height: 50),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          _utility.getBackGround(),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 50),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  IconButton(
-                    onPressed: getLocation,
-                    icon: const Icon(Icons.location_on),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: getLocation,
+                        icon: const Icon(Icons.location_on),
+                      ),
+                      const SizedBox(width: 20),
+                      IconButton(
+                        onPressed: photoget,
+                        icon: const Icon(Icons.camera),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 20),
-                  IconButton(
-                    onPressed: photoget,
-                    icon: const Icon(Icons.camera),
+                  Column(
+                    children: [
+                      Text(latLngState.lat.toString()),
+                      Text(latLngState.lng.toString()),
+                    ],
                   ),
                 ],
               ),
-              Column(
-                children: [
-                  Text(latLngState.lat.toString()),
-                  Text(latLngState.lng.toString()),
-                ],
+              Text(latLngState.imageUrl),
+              IconButton(
+                onPressed: dataSaving,
+                icon: const Icon(Icons.input),
               ),
             ],
-          ),
-          Text(latLngState.imageUrl),
-          IconButton(
-            onPressed: dataSaving,
-            icon: const Icon(Icons.input),
           ),
         ],
       ),
