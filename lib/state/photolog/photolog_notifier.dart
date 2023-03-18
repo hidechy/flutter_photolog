@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:photolog/state/photolog/photolog_state.dart';
 
@@ -10,6 +11,7 @@ final photologProvider = StateNotifierProvider.autoDispose<
 class PhotologStateNotifier extends StateNotifier<List<PhotologState>> {
   PhotologStateNotifier(super.state);
 
+  ///
   Future<void> getAll() async {
     final QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('photolog')
@@ -31,5 +33,20 @@ class PhotologStateNotifier extends StateNotifier<List<PhotologState>> {
     }).toList();
 
     state = list;
+  }
+
+  ///
+  Future<void> delete({required PhotologState param}) async {
+    try {
+      ///
+      final storageReference = FirebaseStorage.instance.refFromURL(param.image);
+      await storageReference.delete();
+
+      ///
+      return FirebaseFirestore.instance
+          .collection('photolog')
+          .doc(param.id)
+          .delete();
+    } catch (error) {}
   }
 }

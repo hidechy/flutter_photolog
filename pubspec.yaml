@@ -27,6 +27,8 @@ dependencies:
 
   flutter_riverpod: ^2.3.0
 
+  flutter_slidable: ^2.0.0
+
   freezed_annotation: ^2.2.0
   geolocator: ^9.0.2
   hooks_riverpod: ^2.1.1
@@ -56,13 +58,13 @@ flutter:
     - assets/images/
 
 flutter_native_splash:
-  image: "assets/images/launcher.png"
-  color: "FFEB3B"
+  image: "assets/images/target.png"
+  color: "ffffff"
 
 flutter_icons:
   android: "launcher_icon"
   ios: true
   image_path: "assets/images/ic_launcher.png"
 
-  adaptive_icon_background: "#212121"
+  adaptive_icon_background: "#ffffff"
   adaptive_icon_foreground: "assets/images/ic_launcher.png"

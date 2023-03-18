@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -256,49 +257,87 @@ class HomeScreen extends ConsumerWidget {
       }
 
       list.add(
-        Container(
-          padding: const EdgeInsets.all(10),
-          margin: const EdgeInsets.only(bottom: 10),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: Colors.white.withOpacity(0.3),
-              ),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Slidable(
+          endActionPane: ActionPane(
+            extentRatio: 0.2,
+            motion: const ScrollMotion(),
             children: [
-              SizedBox(
-                width: 50,
-                child: Image.network(element.image),
-              ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(element.time),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(),
-                        Row(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [Text(element.lat), Text(element.lng)],
-                            ),
-                            const SizedBox(width: 10),
-                            const Icon(Icons.location_on),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+              SlidableAction(
+                onPressed: (context) async {
+                  await _ref
+                      .watch(photologProvider.notifier)
+                      .delete(param: element);
+
+                  await _ref.watch(latLngProvider.notifier).refresh();
+
+                  await _ref.watch(photologProvider.notifier).getAll();
+                },
+                backgroundColor: const Color(0xFF0392CF),
+                foregroundColor: Colors.white,
+                icon: Icons.delete,
+                label: 'delete',
               ),
             ],
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            margin: const EdgeInsets.only(bottom: 10),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.white.withOpacity(0.3),
+                ),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                  width: 50,
+                  child: Image.network(element.image),
+                ),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(),
+                          Text(
+                            element.id,
+                            style: TextStyle(
+                              color: Colors.grey.withOpacity(0.4),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text(element.time),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(),
+                          Row(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(element.lat),
+                                  Text(element.lng)
+                                ],
+                              ),
+                              const SizedBox(width: 10),
+                              const Icon(Icons.location_on),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );
