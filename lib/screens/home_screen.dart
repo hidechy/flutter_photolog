@@ -1,8 +1,12 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, avoid_catches_without_on_clauses, empty_catches
 
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../extensions/extensions.dart';
 import '../state/lat_lng/lat_lng_notifier.dart';
@@ -31,9 +35,17 @@ class HomeScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(
-                onPressed: getLocation,
-                icon: const Icon(Icons.location_on),
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: getLocation,
+                    icon: const Icon(Icons.location_on),
+                  ),
+                  IconButton(
+                    onPressed: photoget,
+                    icon: const Icon(Icons.camera),
+                  ),
+                ],
               ),
               Column(
                 children: [
@@ -107,5 +119,32 @@ class HomeScreen extends ConsumerWidget {
     );
 
     debugPrint('方位:$bearing');
+  }
+
+  ///
+  Future<void> photoget() async {
+    final imagePicker = ImagePicker();
+
+    final file = await imagePicker.pickImage(source: ImageSource.camera);
+
+    print('${file?.path}');
+
+    if (file == null) {
+      return;
+    }
+
+    final uniqueFileName = DateTime.now().toString();
+
+    final referenceRoot = FirebaseStorage.instance.ref();
+    final referenceDirImages = referenceRoot.child(DateTime.now().yyyymmdd);
+    final referenceImageToUpload = referenceDirImages.child(uniqueFileName);
+
+    try {
+      await referenceImageToUpload.putFile(File(file.path));
+
+      final aaa = await referenceImageToUpload.getDownloadURL();
+
+      print(aaa);
+    } catch (error) {}
   }
 }
