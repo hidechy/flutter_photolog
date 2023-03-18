@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 import '../extensions/extensions.dart';
 import '../state/lat_lng/lat_lng_notifier.dart';
@@ -46,13 +47,10 @@ class HomeScreen extends ConsumerWidget {
                     onPressed: getLocation,
                     icon: const Icon(Icons.location_on),
                   ),
+                  const SizedBox(width: 20),
                   IconButton(
                     onPressed: photoget,
                     icon: const Icon(Icons.camera),
-                  ),
-                  IconButton(
-                    onPressed: dataSaving,
-                    icon: const Icon(Icons.input),
                   ),
                 ],
               ),
@@ -63,6 +61,11 @@ class HomeScreen extends ConsumerWidget {
                 ],
               ),
             ],
+          ),
+          Text(latLngState.imageUrl),
+          IconButton(
+            onPressed: dataSaving,
+            icon: const Icon(Icons.input),
           ),
         ],
       ),
@@ -150,6 +153,8 @@ class HomeScreen extends ConsumerWidget {
       await referenceImageToUpload.putFile(File(file.path));
 
       imageUrl = await referenceImageToUpload.getDownloadURL();
+
+      await _ref.watch(latLngProvider.notifier).setImageUrl(imageUrl: imageUrl);
     } catch (error) {}
   }
 
@@ -172,8 +177,11 @@ class HomeScreen extends ConsumerWidget {
       return;
     }
 
+    final timeFormat = DateFormat('HH:mm:ss');
+
     final param = <String, String>{
       'date': DateTime.now().yyyymmdd,
+      'time': timeFormat.format(DateTime.now()),
       'lat': latLngState.lat.toString(),
       'lng': latLngState.lng.toString(),
       'image': imageUrl,

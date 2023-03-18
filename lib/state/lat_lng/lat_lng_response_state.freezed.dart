@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$LatLngResponseState {
   double get lat => throw _privateConstructorUsedError;
   double get lng => throw _privateConstructorUsedError;
+  String get imageUrl => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $LatLngResponseStateCopyWith<LatLngResponseState> get copyWith =>
@@ -30,7 +31,7 @@ abstract class $LatLngResponseStateCopyWith<$Res> {
           LatLngResponseState value, $Res Function(LatLngResponseState) then) =
       _$LatLngResponseStateCopyWithImpl<$Res, LatLngResponseState>;
   @useResult
-  $Res call({double lat, double lng});
+  $Res call({double lat, double lng, String imageUrl});
 }
 
 /// @nodoc
@@ -48,6 +49,7 @@ class _$LatLngResponseStateCopyWithImpl<$Res, $Val extends LatLngResponseState>
   $Res call({
     Object? lat = null,
     Object? lng = null,
+    Object? imageUrl = null,
   }) {
     return _then(_value.copyWith(
       lat: null == lat
@@ -58,6 +60,10 @@ class _$LatLngResponseStateCopyWithImpl<$Res, $Val extends LatLngResponseState>
           ? _value.lng
           : lng // ignore: cast_nullable_to_non_nullable
               as double,
+      imageUrl: null == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -70,7 +76,7 @@ abstract class _$$_LatLngResponseStateCopyWith<$Res>
       __$$_LatLngResponseStateCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({double lat, double lng});
+  $Res call({double lat, double lng, String imageUrl});
 }
 
 /// @nodoc
@@ -86,6 +92,7 @@ class __$$_LatLngResponseStateCopyWithImpl<$Res>
   $Res call({
     Object? lat = null,
     Object? lng = null,
+    Object? imageUrl = null,
   }) {
     return _then(_$_LatLngResponseState(
       lat: null == lat
@@ -96,6 +103,10 @@ class __$$_LatLngResponseStateCopyWithImpl<$Res>
           ? _value.lng
           : lng // ignore: cast_nullable_to_non_nullable
               as double,
+      imageUrl: null == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -103,7 +114,8 @@ class __$$_LatLngResponseStateCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_LatLngResponseState implements _LatLngResponseState {
-  const _$_LatLngResponseState({this.lat = 0.0, this.lng = 0.0});
+  const _$_LatLngResponseState(
+      {this.lat = 0.0, this.lng = 0.0, this.imageUrl = ''});
 
   @override
   @JsonKey()
@@ -111,10 +123,13 @@ class _$_LatLngResponseState implements _LatLngResponseState {
   @override
   @JsonKey()
   final double lng;
+  @override
+  @JsonKey()
+  final String imageUrl;
 
   @override
   String toString() {
-    return 'LatLngResponseState(lat: $lat, lng: $lng)';
+    return 'LatLngResponseState(lat: $lat, lng: $lng, imageUrl: $imageUrl)';
   }
 
   @override
@@ -123,11 +138,13 @@ class _$_LatLngResponseState implements _LatLngResponseState {
         (other.runtimeType == runtimeType &&
             other is _$_LatLngResponseState &&
             (identical(other.lat, lat) || other.lat == lat) &&
-            (identical(other.lng, lng) || other.lng == lng));
+            (identical(other.lng, lng) || other.lng == lng) &&
+            (identical(other.imageUrl, imageUrl) ||
+                other.imageUrl == imageUrl));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, lat, lng);
+  int get hashCode => Object.hash(runtimeType, lat, lng, imageUrl);
 
   @JsonKey(ignore: true)
   @override
@@ -138,13 +155,17 @@ class _$_LatLngResponseState implements _LatLngResponseState {
 }
 
 abstract class _LatLngResponseState implements LatLngResponseState {
-  const factory _LatLngResponseState({final double lat, final double lng}) =
-      _$_LatLngResponseState;
+  const factory _LatLngResponseState(
+      {final double lat,
+      final double lng,
+      final String imageUrl}) = _$_LatLngResponseState;
 
   @override
   double get lat;
   @override
   double get lng;
+  @override
+  String get imageUrl;
   @override
   @JsonKey(ignore: true)
   _$$_LatLngResponseStateCopyWith<_$_LatLngResponseState> get copyWith =>
