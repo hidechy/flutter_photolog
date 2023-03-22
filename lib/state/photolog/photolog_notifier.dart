@@ -1,7 +1,10 @@
+// ignore_for_file: avoid_catches_without_on_clauses, empty_catches
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:photolog/state/photolog/photolog_state.dart';
+
+import 'photolog_state.dart';
 
 final photologProvider = StateNotifierProvider.autoDispose<
     PhotologStateNotifier, List<PhotologState>>((ref) {

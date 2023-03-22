@@ -91,7 +91,7 @@ class InputScreen extends ConsumerWidget {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        icon: Icon(Icons.close),
+                        icon: const Icon(Icons.close),
                       ),
                       IconButton(
                         onPressed: () async {
@@ -251,7 +251,7 @@ class InputScreen extends ConsumerWidget {
 
     final photologState = _ref.watch(photologProvider);
 
-    var today = DateTime.now().yyyymmdd;
+    final today = DateTime.now().yyyymmdd;
 
     var keepDate = '';
     photologState.forEach((element) {
